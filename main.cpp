@@ -4,6 +4,7 @@
 #include <iostream>
 #include <math.h>
 #include "Physics.cpp"
+#include "Renderer.cpp"
 
 using namespace sf;
 using namespace std;
@@ -35,35 +36,6 @@ float currColor = 0;
 int SUBSTEPS = 8;
 Vector2f GRAVITY = { 0.f, 1200.f };
 float DAMPING_COEFF = 50.f;
-
-
-void renderParticles(RenderWindow* window, Solver* solver)
-{
-	for (auto particle : solver->particleArray)
-	{
-		CircleShape circleShape(particle->radius, 30);
-
-		//Drawing on screen
-		circleShape.setFillColor(particle->color);
-		circleShape.setPosition(particle->pos);
-		circleShape.setOrigin(particle->radius, particle->radius);
-		window->draw(circleShape);
-	}
-}
-
-
-void renderBoundaries(RenderWindow* window, Solver* solver)
-{
-	if (solver->circularBoundary)
-	{
-		CircleShape boundary(solver->boundaryRadius, 128);
-		boundary.setPosition(solver->centre);
-		boundary.setOrigin(solver->boundaryRadius, solver->boundaryRadius);
-		boundary.setFillColor(Color(100, 100, 100, 75));
-
-		window->draw(boundary);
-	}
-}
 
 
 void spawnRandomParticle(Solver* solver, float dt)
@@ -99,6 +71,7 @@ int main()
 
     RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "bruh", Style::Default, settings);
 	Solver solver(BOUNDARY_RADIUS, { (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT }, DAMPING_COEFF, SUBSTEPS);
+	RendererObject renderer;
 
 	SPAWN_POS = { WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 8.f };
 	
@@ -138,8 +111,8 @@ int main()
 		// render
 		window.clear();
 
-		renderParticles(&window, &solver);
-		renderBoundaries(&window, &solver);
+		renderer.renderParticles(&window, &solver);
+		renderer.renderBoundaries(&window, &solver);
 
 		window.display();
 	}
