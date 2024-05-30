@@ -29,7 +29,16 @@ public:
 			CircleShape boundary(solver->boundaryRadius, 128);
 			boundary.setPosition(solver->centre);
 			boundary.setOrigin(solver->boundaryRadius, solver->boundaryRadius);
-			boundary.setFillColor(Color(100, 100, 100, 75));
+			boundary.setFillColor(Color(0, 0, 0, 255));
+
+			window->draw(boundary);
+		}
+		else
+		{
+			RectangleShape boundary(solver->windowSize - 2.f * Vector2f{solver->boundaryWidth, solver->boundaryHeight});
+			boundary.setPosition(solver->windowSize / 2.f + Vector2f{solver->boundaryWidth, solver->boundaryHeight});
+			boundary.setOrigin(solver->windowSize / 2.f);
+			boundary.setFillColor(Color(0, 0, 0, 255));
 
 			window->draw(boundary);
 		}

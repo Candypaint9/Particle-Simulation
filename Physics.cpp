@@ -15,6 +15,8 @@ public:
 	float boundaryRadius;//for circular boundary
 	bool circularBoundary;
 
+	Vector2f windowSize;
+
 	float boundaryWidth;
 	float boundaryHeight;
 
@@ -25,19 +27,21 @@ public:
 	float dampingCoeff;
 
 
-	Solver(float r, Vector2f windowSize, float damp, int steps = 1)
+	Solver(float r, Vector2f winSize, float damp, int steps = 1)
 	{
 		boundaryRadius = r;
 		circularBoundary = true;
 
-		centre = windowSize / 2.f;
+		centre = winSize / 2.f;
 
 		dampingCoeff = damp;
 
 		substeps = steps;
+
+		windowSize = winSize;
 	}
 
-	Solver(float w, float h, Vector2f windowSize, float damp, int steps = 1)
+	Solver(float w, float h, Vector2f winSize, float damp, int steps = 1)
 	{
 		boundaryWidth = w;
 		boundaryHeight = h;
@@ -46,6 +50,8 @@ public:
 		dampingCoeff = damp;
 
 		substeps = steps;
+
+		windowSize = winSize;
 	}
 
 	Particle* addParticle(Vector2f _pos, float r, Color color)
@@ -67,6 +73,25 @@ public:
 				Vector2f dir = unitVector(particle->pos  - centre);
 
 				particle->pos -= diff * dir;
+			}
+		}
+		else
+		{
+			if (particle->pos.x > windowSize.x - boundaryWidth - particle->radius)
+			{
+				particle->pos.x = windowSize.x - boundaryWidth - particle->radius;
+			}			
+			else if (particle->pos.x < boundaryWidth + particle->radius)
+			{
+				particle->pos.x = boundaryWidth + particle->radius;
+			}
+			else if (particle->pos.y > windowSize.y - boundaryHeight - particle->radius)
+			{
+				particle->pos.y = windowSize.y - boundaryHeight - particle->radius;
+			}
+			else if (particle->pos.y < boundaryHeight + particle->radius)
+			{
+				particle->pos.y = boundaryHeight + particle->radius;
 			}
 		}
 	}
