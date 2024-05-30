@@ -8,17 +8,19 @@
 using namespace sf;
 using namespace std;
 
-int WINDOW_WIDTH = 1400;
-int WINDOW_HEIGHT = 1050;
+int WINDOW_WIDTH = 1980;
+int WINDOW_HEIGHT = 1080;
+
+float BOUNDARY_RADIUS = 500.f;
 
 float RADIUS = 5;
-float MAX_RADIUS = 7;
-float MIN_RADIUS = 3;
+float MAX_RADIUS = 12;
+float MIN_RADIUS = 5;
 
-int NUMBER = 700;
+int NUMBER = 500;
 
-float TIME_GAP = 0.02f;
-float SPAWN_SPEED = 1000.f;
+float TIME_GAP = 0.01f;
+float SPAWN_SPEED = 1500.f;
 Vector2f SPAWN_POS;
 float PI = 3.14159274101257324219;
 
@@ -31,7 +33,6 @@ int multiplier = -2;
 float currColor = 0;
 
 int SUBSTEPS = 8;
-
 Vector2f GRAVITY = { 0.f, 1200.f };
 float DAMPING_COEFF = 50.f;
 
@@ -93,15 +94,18 @@ int main()
 {
 	srand(time(NULL));
 
-    RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "bruh");
-	Solver solver(400.f, { (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT }, DAMPING_COEFF, SUBSTEPS);
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 1;
 
-	SPAWN_POS = { WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 4.f };
+    RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "bruh", Style::Default, settings);
+	Solver solver(BOUNDARY_RADIUS, { (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT }, DAMPING_COEFF, SUBSTEPS);
+
+	SPAWN_POS = { WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 8.f };
 	
 	Clock clock;
 	Clock timer;
 
-	window.setFramerateLimit(240);
+	window.setFramerateLimit(60);
 
 	int spawned = 0;
 	unsigned int time;
