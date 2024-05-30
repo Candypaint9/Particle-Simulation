@@ -1,4 +1,3 @@
-#pragma once
 #include "Physics.cpp"
 
 using namespace sf;
