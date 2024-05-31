@@ -96,6 +96,19 @@ public:
 		}
 	}
 
+	void resolveCollisions(Particle* particle, Particle* toCheck, float dist, float sumRadius)
+	{
+		Vector2f dir = unitVector(particle->pos - toCheck->pos);	//towards partcile from toCheck
+		float move = (sumRadius - dist) / 2.f;
+
+		float mass_ratio_1 = toCheck->radius / sumRadius;
+		float mass_ratio_2 = particle->radius / sumRadius;
+
+		toCheck->pos -= move * mass_ratio_2 * dir;
+		particle->pos += move * mass_ratio_1 * dir;
+	}
+
+
 	void checkCollisions(Particle* toCheck)
 	{
 		for (auto particle : particleArray)
@@ -111,14 +124,7 @@ public:
 
 			if (dist < sumRadius)
 			{
-				Vector2f dir = unitVector(particle->pos - toCheck->pos);	//towards partcile from toCheck
-				float move = (sumRadius - dist) / 2.f;
-
-				float mass_ratio_1 = toCheck->radius / sumRadius;
-				float mass_ratio_2 = particle->radius / sumRadius;
-
-				toCheck->pos -= move * mass_ratio_2 * dir;
-				particle->pos += move * mass_ratio_1 * dir;
+				resolveCollisions(particle, toCheck, dist, sumRadius);
 			}
 		}
 	}

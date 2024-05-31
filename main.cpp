@@ -20,7 +20,7 @@ float RADIUS = 5;
 float MAX_RADIUS = 12;
 float MIN_RADIUS = 5;
 
-int NUMBER = 1000;
+int NUMBER = 500;
 
 float TIME_GAP = 0.01f;
 float SPAWN_SPEED = 1500.f;
