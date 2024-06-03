@@ -20,7 +20,7 @@ float RADIUS = 5;
 float MAX_RADIUS = 12;
 float MIN_RADIUS = 5;
 
-int NUMBER = 500;
+int NUMBER = 10000;
 
 float TIME_GAP = 0.01f;
 float SPAWN_SPEED = 1500.f;
@@ -72,8 +72,8 @@ int main()
 	settings.antialiasingLevel = 1;
 
     RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "bruh", Style::Default, settings);
-	//Solver solver(BOUNDARY_RADIUS, { (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT }, DAMPING_COEFF, SUBSTEPS);
-	Solver solver(BOUNDARY_WIDTH, BOUNDARY_HEIGHT, { (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT }, DAMPING_COEFF, SUBSTEPS);
+	//Solver solver(BOUNDARY_RADIUS, { (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT }, DAMPING_COEFF, SUBSTEPS, MAX_RADIUS);
+	Solver solver(BOUNDARY_WIDTH, BOUNDARY_HEIGHT, { (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT }, DAMPING_COEFF, SUBSTEPS, MAX_RADIUS);
 	RendererObject renderer;
 
 	SPAWN_POS = { WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 8.f };

@@ -7,10 +7,27 @@
 using namespace sf;
 
 
+class Cell
+{
+public:
+	std::vector<Particle*> contained;
+
+	Cell() = default;
+
+	void clearCell()
+	{
+		contained.clear();
+	}
+};
+
+
 class Solver
 {
 public:
 	std::vector<Particle*> particleArray;
+	std::vector<std::vector<Cell*>> collisionGrid;
+
+	float cellSize;
 	
 	float boundaryRadius;//for circular boundary
 	bool circularBoundary;
@@ -27,32 +44,28 @@ public:
 	float dampingCoeff;
 
 
-	Solver(float r, Vector2f winSize, float damp, int steps = 1)
+	Solver(float r, Vector2f winSize, float damp, int steps = 1, float cellSize)
 	{
 		boundaryRadius = r;
 		circularBoundary = true;
 
 		centre = winSize / 2.f;
 
-		dampingCoeff = damp;
-
-		substeps = steps;
-
-		windowSize = winSize;
+		initSolver(winSize, damp, steps);
+		initGrid(cellSize);
 	}
 
-	Solver(float w, float h, Vector2f winSize, float damp, int steps = 1)
+	Solver(float w, float h, Vector2f winSize, float damp, int steps = 1, float cellSize)
 	{
 		boundaryWidth = w;
 		boundaryHeight = h;
 		circularBoundary = false;
 
-		dampingCoeff = damp;
-
-		substeps = steps;
-
-		windowSize = winSize;
+		initSolver(winSize, damp, steps);
+		initGrid(cellSize);
 	}
+
+
 
 	Particle* addParticle(Vector2f _pos, float r, Color color)
 	{
@@ -62,6 +75,25 @@ public:
 
 		return particle;
 	}
+
+
+	void updateGrid()
+	{
+
+	}
+
+
+	void clearGrid()
+	{
+		for (auto row : collisionGrid)
+		{
+			for (auto cell : row)
+			{
+				cell->clearCell();
+			}
+		}
+	}
+
 
 	void checkBoundaries(Particle* particle)
 	{
@@ -111,7 +143,7 @@ public:
 
 	void checkCollisions(Particle* toCheck)
 	{
-		for (auto particle : particleArray)
+		/*for (auto particle : particleArray)
 		{
 			if (toCheck == particle)
 			{
@@ -126,7 +158,10 @@ public:
 			{
 				resolveCollisions(particle, toCheck, dist, sumRadius);
 			}
-		}
+		}*/
+
+
+
 	}
 
 	void updateParticles(float dt, Vector2f GRAVITY)
@@ -151,6 +186,35 @@ public:
 		particle->setVelocity(step_dt, velocity);
 	}
 
+
+
+
+private:
+
+	void initSolver(Vector2f winSize, float damp, int steps = 1)
+	{
+		dampingCoeff = damp;
+		substeps = steps;
+		windowSize = winSize;
+	}
+
+	//to initialize the collision grid
+	void initGrid(float cellSize)
+	{
+		for (int i = 0; i < windowSize.x / cellSize; i++)
+		{
+			std::vector<Cell*> row;
+
+			for (int j = 0; j < windowSize.y / cellSize; j++)
+			{
+				Cell* cell = new Cell();
+
+				row.push_back(cell);
+			}
+
+			collisionGrid.push_back(row);
+		}
+	}
 
 
 	//math functions
