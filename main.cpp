@@ -9,7 +9,7 @@
 using namespace sf;
 using namespace std;
 
-int FPS = 240;
+int FPS = 100;
 int PARTICLE_NUMBER = 1000;
 
 

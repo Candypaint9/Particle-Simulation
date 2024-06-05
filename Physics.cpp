@@ -10,13 +10,20 @@ using namespace sf;
 class Cell
 {
 public:
-	std::vector<Particle*> contained;
+	int numContained = 0;
+	Particle* contained[4] = {};
 
 	Cell() = default;
 
 	void clearCell()
 	{
-		contained.clear();
+		numContained = 0;
+	}
+
+	void addCell(Particle* particle)
+	{
+		contained[numContained] = particle;
+		numContained++;
 	}
 };
 
@@ -77,83 +84,83 @@ public:
 	}
 
 
-void updateGrid()
-{
-	for (auto particle : particleArray)
+	void updateGrid()
 	{
-		int x = floor(particle->pos.x / cellSize);
-		int y = floor(particle->pos.y / cellSize);
-
-		collisionGrid[y][x]->contained.push_back(particle);
-	}
-}
-
-
-void clearGrid()
-{
-	for (auto row : collisionGrid)
-	{
-		for (auto cell : row)
+		for (auto particle : particleArray)
 		{
-			cell->clearCell();
+			int x = floor(particle->pos.x / cellSize);
+			int y = floor(particle->pos.y / cellSize);
+
+			collisionGrid[y][x]->addCell(particle);
 		}
 	}
-}
 
 
-void checkBoundaries(Particle* particle)
-{
-	if (circularBoundary)
+	void clearGrid()
 	{
-		float diff = calcDistance(particle->pos, centre) + particle->radius - boundaryRadius;
-		if (diff > 0)
+		for (auto row : collisionGrid)
 		{
-			Vector2f dir = unitVector(particle->pos - centre);
-
-			particle->pos -= diff * dir;
+			for (auto cell : row)
+			{
+				cell->clearCell();
+			}
 		}
 	}
-	else
+
+
+	void checkBoundaries(Particle* particle)
 	{
-		if (particle->pos.x > windowSize.x - boundaryWidth - particle->radius)
+		if (circularBoundary)
 		{
-			particle->pos.x = windowSize.x - boundaryWidth - particle->radius;
+			float diff = calcDistance(particle->pos, centre) + particle->radius - boundaryRadius;
+			if (diff > 0)
+			{
+				Vector2f dir = unitVector(particle->pos - centre);
+
+				particle->pos -= diff * dir;
+			}
 		}
-		else if (particle->pos.x < boundaryWidth + particle->radius)
+		else
 		{
-			particle->pos.x = boundaryWidth + particle->radius;
-		}
-		else if (particle->pos.y > windowSize.y - boundaryHeight - particle->radius)
-		{
-			particle->pos.y = windowSize.y - boundaryHeight - particle->radius;
-		}
-		else if (particle->pos.y < boundaryHeight + particle->radius)
-		{
-			particle->pos.y = boundaryHeight + particle->radius;
+			if (particle->pos.x > windowSize.x - boundaryWidth - particle->radius)
+			{
+				particle->pos.x = windowSize.x - boundaryWidth - particle->radius;
+			}
+			else if (particle->pos.x < boundaryWidth + particle->radius)
+			{
+				particle->pos.x = boundaryWidth + particle->radius;
+			}
+			else if (particle->pos.y > windowSize.y - boundaryHeight - particle->radius)
+			{
+				particle->pos.y = windowSize.y - boundaryHeight - particle->radius;
+			}
+			else if (particle->pos.y < boundaryHeight + particle->radius)
+			{
+				particle->pos.y = boundaryHeight + particle->radius;
+			}
 		}
 	}
-}
 
-void resolveCollisions(Particle* particle, Particle* toCheck, float dist, float sumRadius)
-{
-	Vector2f dir = unitVector(particle->pos - toCheck->pos);	//towards partcile from toCheck
-	float move = (sumRadius - dist) / 2.f;
-
-	float mass_ratio_1 = toCheck->radius / sumRadius;
-	float mass_ratio_2 = particle->radius / sumRadius;
-
-	toCheck->pos -= move * mass_ratio_2 * dir;
-	particle->pos += move * mass_ratio_1 * dir;
-}
-
-
-void checkCollisions(Cell* curr, vector<Particle*>& toCheck)
-{
-	for (auto p1 : curr->contained)
+	void resolveCollisions(Particle* particle, Particle* toCheck, float dist, float sumRadius)
 	{
-		for (auto p2 : toCheck)
+		Vector2f dir = unitVector(particle->pos - toCheck->pos);	//towards partcile from toCheck
+		float move = (sumRadius - dist) / 2.f;
+
+		float mass_ratio_1 = toCheck->radius / sumRadius;
+		float mass_ratio_2 = particle->radius / sumRadius;
+
+		toCheck->pos -= move * mass_ratio_2 * dir;
+		particle->pos += move * mass_ratio_1 * dir;
+	}
+
+
+	void checkCollisionsWithCellParticles(Cell* curr, Particle* p2)
+	{
+		for (int i = 0; i < curr->numContained; i++)
 		{
-			if (p1->pos == p2->pos)
+			Particle* p1 = curr->contained[i];
+
+			if (p1 == p2)
 			{
 				continue;
 			}
@@ -167,41 +174,39 @@ void checkCollisions(Cell* curr, vector<Particle*>& toCheck)
 			}
 		}
 	}
-}
 
 
-void handleCollisions()
-{
-	vector<vector<bool>> visited(collisionGrid.size(), vector<bool>(collisionGrid[0].size(), 0));
-
-	for (int i = 1; i < collisionGrid.size() - 1; i++)
+	void handleCollisions()
 	{
-		for (int j = 1; j < collisionGrid[0].size() - 1; j++)
+		for (int i = 0; i < collisionGrid.size(); i++)
 		{
-			if (visited[i][j])
+			for (int j = 0; j < collisionGrid[0].size(); j++)
 			{
-				continue;
-			}
-
-			vector<Particle*> toCheck;
-
-			for (int x = -1; x <= 1; x++)
-			{
-				for (int y = -1; y <= 1; y++)
+				for (int k = 0; k < collisionGrid[i][j]->numContained; k++)
 				{
-					for (auto particle : collisionGrid[i + x][j + y]->contained)
+					for (int x = -1; x <= 1; x++)
 					{
-						toCheck.push_back(particle);
+						for (int y = -1; y <= 1; y++)
+						{
+							Vector2i coords = { x, y };
+
+							if (coords == Vector2i{-1, -1} || coords == Vector2i{-1, 0} || coords == Vector2i{0, -1} || coords == Vector2i{1, -1})
+							{
+								continue;
+							}
+
+							if (i+x < 0 || i+x >= collisionGrid.size() || j+y < 0 || j+y >= collisionGrid[0].size())
+							{
+								continue;
+							}
+
+							checkCollisionsWithCellParticles(collisionGrid[i+x][j+y], collisionGrid[i][j]->contained[k]);
+						}
 					}
 				}
 			}
-
-			checkCollisions(collisionGrid[i][j], toCheck);
-
-			//visited[i][j] = 1;
 		}
 	}
-}
 
 	void updateParticles(float dt, Vector2f GRAVITY)
 	{
