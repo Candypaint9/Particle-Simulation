@@ -9,7 +9,7 @@
 using namespace sf;
 using namespace std;
 
-int FPS = 60;
+int FPS = 240;
 int PARTICLE_NUMBER = 1000;
 
 
@@ -80,10 +80,21 @@ int main()
 
 	SPAWN_POS = { WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 8.f };
 	
+
+
+	//FPS
 	Clock clock;
 	Clock timer;
 
 	window.setFramerateLimit(FPS);
+
+	Font font;
+	font.loadFromFile("Fonts/comicsans.ttf");
+	
+	Text showFPS;
+	showFPS.setFont(font);
+	showFPS.setCharacterSize(24);
+
 
 	int spawned = 0;
 	unsigned int time;
@@ -100,6 +111,7 @@ int main()
 		}
 
 		float dt = clock.restart().asSeconds();
+		showFPS.setString(to_string(1 / dt));
 
 
 		if (spawned < PARTICLE_NUMBER && timer.getElapsedTime().asSeconds() > TIME_GAP)
@@ -115,6 +127,7 @@ int main()
 
 		// render
 		window.clear(Color(100, 100, 100, 75));
+		window.draw(showFPS);
 
 		renderer.renderBoundaries(&window, &solver);
 		renderer.renderParticles(&window, &solver);
