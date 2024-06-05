@@ -111,7 +111,7 @@ int main()
 		}
 
 		float dt = clock.restart().asSeconds();
-		showFPS.setString(to_string(1 / dt));
+		showFPS.setString(to_string((int)(1 / dt)));
 
 
 		if (spawned < PARTICLE_NUMBER && timer.getElapsedTime().asSeconds() > TIME_GAP)

@@ -198,7 +198,7 @@ void handleCollisions()
 
 			checkCollisions(collisionGrid[i][j], toCheck);
 
-			visited[i][j] = 1;
+			//visited[i][j] = 1;
 		}
 	}
 }
