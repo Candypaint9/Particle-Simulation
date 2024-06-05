@@ -43,4 +43,28 @@ public:
 			window->draw(boundary);
 		}
 	}
+
+	void showCollisionGrid(RenderWindow* window, Solver* solver)
+	{
+		for (int i = 0; i < solver->collisionGrid.size(); i++)
+		{
+
+			RectangleShape line(Vector2f{solver->windowSize.x, 2});
+			
+			line.setFillColor(Color::Cyan);
+			line.setPosition(Vector2f{ 0, i* solver->cellSize });
+
+			window->draw(line);
+		}
+
+		for (int j = 0; j < solver->collisionGrid[0].size(); j++)
+		{
+			RectangleShape line(Vector2f{ 2, solver->windowSize.y});
+
+			line.setFillColor(Color::Cyan);
+			line.setPosition(Vector2f{ j* solver->cellSize, 0 });
+
+			window->draw(line);
+		}
+	}
 };
