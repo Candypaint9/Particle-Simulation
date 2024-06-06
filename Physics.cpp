@@ -195,12 +195,13 @@ public:
 								continue;
 							}
 
-							if (i+x < 0 || i+x >= collisionGrid.size() || j+y < 0 || j+y >= collisionGrid[0].size())
+							if (i+y < 0 || i+y >= collisionGrid.size() || j+x < 0 || j+x >= collisionGrid[0].size())
 							{
 								continue;
 							}
 
-							checkCollisionsWithCellParticles(collisionGrid[i+x][j+y], collisionGrid[i][j]->contained[k]);
+							//cout << i + y << " " << j + x << endl;
+							checkCollisionsWithCellParticles(collisionGrid[i+y][j+x], collisionGrid[i][j]->contained[k]);
 						}
 					}
 				}
@@ -243,6 +244,7 @@ private:
 		substeps = steps;
 		windowSize = winSize;
 		cellSize = cSize;
+		//cellSize = max(cSize, 20.f);
 	}
 
 	//to initialize the collision grid
@@ -261,6 +263,8 @@ private:
 
 			collisionGrid.push_back(row);
 		}
+
+		//cout << collisionGrid.size() << " " << collisionGrid[0].size() << endl;
 	}
 
 

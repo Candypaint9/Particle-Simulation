@@ -9,8 +9,8 @@
 using namespace sf;
 using namespace std;
 
-int FPS = 100;
-int PARTICLE_NUMBER = 1000;
+int FPS = 240;
+int PARTICLE_NUMBER = 3000;
 
 
 int WINDOW_WIDTH = 1980;
@@ -37,9 +37,9 @@ int multiplier = -2;
 
 float currColor = 0;
 
-int SUBSTEPS = 8;
+int SUBSTEPS = 12;
 Vector2f GRAVITY = { 0.f, 1200.f };
-float DAMPING_COEFF = 50.f;
+float DAMPING_COEFF = 200.f;
 
 
 void spawnRandomParticle(Solver* solver, float dt)
